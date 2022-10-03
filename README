@@ -1,0 +1,31 @@
+This is a simple kernel module written to demonstrate the speed of the PRNG
+currently in OpenZFS's Linux SPL.
+
+This module was written on Gentoo Linux against Linux 5.16.14-gentoo-x86_64,
+but should build against any recent kernel (Linux 5.0 and later) on any
+distribution with the kernel toolchain, headers and build system installed.
+Here is a sample session:
+
+	$ cd /path/to/poc_dev
+	$ make
+	make -C /lib/modules/5.16.14-gentoo-x86_64/build M=/home/richard/poc-urandom modules
+	make[1]: Entering directory '/usr/src/linux-5.16.14-gentoo'
+	warning: the compiler differs from the one used to build the kernel
+	  The kernel was built by: x86_64-pc-linux-gnu-gcc (Gentoo 11.3.0 p4) 11.3.0
+	  You are using:           gcc (Gentoo 11.3.0 p4) 11.3.0
+	make[1]: Leaving directory '/usr/src/linux-5.16.14-gentoo'
+	$ sudo insmod poc_char.ko
+	$ time dd if=/dev/urandom-fast bs=1M count=1000 of=/dev/null
+	1000+0 records in
+	1000+0 records out
+	1048576000 bytes (1.0 GB, 1000 MiB) copied, 0.333377 s, 3.1 GB/s
+
+	real    0m0.334s
+	user    0m0.000s
+	sys     0m0.332s
+	$ make clean
+	make -C /lib/modules/5.16.14-gentoo-x86_64/build M=/home/richard/poc-urandom clean
+	make[1]: Entering directory '/usr/src/linux-5.16.14-gentoo'
+	  CLEAN   /home/richard/poc-urandom/Module.symvers
+	make[1]: Leaving directory '/usr/src/linux-5.16.14-gentoo'
+	$ sudo rmmod poc_char.ko

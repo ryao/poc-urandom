@@ -25,7 +25,7 @@
 #include <linux/random.h>
 #include <linux/vmalloc.h>
 
-#define	POC_DRIVER "urandom-fast"
+#define	POC_DRIVER "urandom-cs128p"
 
 #define	MIN(a, b) ((a) < (b) ? (a) : (b))
 #define	P2ROUNDUP(x, align)	((((x) - 1) | ((align) - 1)) + 1)
@@ -174,16 +174,9 @@ spl_random_init(void)
 	get_random_bytes(s, sizeof (s));
 
 	if (s[0] == 0 && s[1] == 0) {
-		if (jiffies != 0) {
-			s[0] = jiffies;
-			s[1] = ~0 - jiffies;
-		} else {
-			(void) memcpy(s, "improbable seed", sizeof (s));
-		}
 		printk("SPL: get_random_bytes() returned 0 "
-		    "when generating random seed. Setting initial seed to "
-		    "0x%016llx%016llx.\n", cpu_to_be64(s[0]),
-		    cpu_to_be64(s[1]));
+		    "when generating random seed.");
+		return EAGAIN;
 	}
 
 	for_each_possible_cpu(i) {

@@ -154,7 +154,7 @@ poc_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 	xp = get_cpu_ptr(spl_pseudo_entropy);
 
 	for (i = 0; i < len; i += sizeof (uint64_t)) {
-		*(uint64_t *)buf = spl_rand_next(xp);
+		*(uint64_t *)(buf + i) = spl_rand_next(xp);
 	}
 
 	put_cpu_ptr(spl_pseudo_entropy);

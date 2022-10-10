@@ -29,3 +29,76 @@ Here is a sample session:
 	  CLEAN   /home/richard/poc-urandom/Module.symvers
 	make[1]: Leaving directory '/usr/src/linux-5.16.14-gentoo'
 	$ sudo rmmod poc_char.ko
+
+
+Linux debian-x64 5.10.0-18-amd64 #1 SMP Debian 5.10.140-1 (2022-09-02) x86_64 GNU/Linux
+
+```
+cs128p
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.00081603 s, 40.2 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000628258 s, 52.2 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000721454 s, 45.4 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000675106 s, 388 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000721853 s, 363 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000657122 s, 399 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.000743554 s, 1.4 GB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.000895209 s, 1.2 GB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00074673 s, 1.4 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00586753 s, 5.7 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00539644 s, 6.2 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00565353 s, 5.9 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.188485 s, 5.7 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.190267 s, 5.6 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.189513 s, 5.7 GB/s
+
+cs256pp
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000680205 s, 48.2 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000724579 s, 45.2 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000620804 s, 52.8 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000653366 s, 401 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000667852 s, 393 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.00066132 s, 396 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00118478 s, 885 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.000764293 s, 1.4 GB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.000771307 s, 1.4 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00613859 s, 5.5 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00608664 s, 5.5 GB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.00600209 s, 5.6 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.217054 s, 4.9 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.218228 s, 4.9 GB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 0.217007 s, 4.9 GB/s
+
+blake3
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000190477 s, 172 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000290946 s, 113 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000184336 s, 178 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.00059695 s, 439 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000589145 s, 445 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000603502 s, 434 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00191121 s, 549 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00181901 s, 576 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.001813 s, 578 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0533191 s, 629 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0526816 s, 637 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0533028 s, 630 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 1.70422 s, 630 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 1.70368 s, 630 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 1.90915 s, 562 MB/s
+
+linux system - /dev/urandom
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000387918 s, 84.5 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000351018 s, 93.4 MB/s
+bs=32  count=1k 32768 bytes (33 kB, 32 KiB) copied, 0.000321223 s, 102 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000821291 s, 319 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000936987 s, 280 MB/s
+bs=256 count=1k 262144 bytes (262 kB, 256 KiB) copied, 0.000803397 s, 326 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00233966 s, 448 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00251907 s, 416 MB/s
+bs=1k  count=1k 1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00246017 s, 426 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0663126 s, 506 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0662788 s, 506 MB/s
+bs=32k count=1k 33554432 bytes (34 MB, 32 MiB) copied, 0.0655103 s, 512 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.1489 s, 500 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.11445 s, 508 MB/s
+bs=1M  count=1k 1073741824 bytes (1.1 GB, 1.0 GiB) copied, 2.10743 s, 510 MB/s
+```

@@ -13,6 +13,6 @@ for m in $MODS; do
 done
 
 for m in $MODS; do
-  echo dd if=/dev/urandom-${m} of=/tmp/${m} bs=1M count=1k
-  dd if=/dev/urandom-${m} of=/tmp/${m} bs=1M count=1k
+  echo dd if=/dev/urandom-${m} of=/tmp/${m} bs=1M count=2
+  dd if=/dev/urandom-${m} of=/tmp/${m} bs=1M count=2
 done

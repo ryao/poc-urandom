@@ -31,56 +31,69 @@
 
 #define	POC_DRIVER	"urandom-blake3"
 #define	MAX_PER_KEY	0xdeadbeaf
+#define	RNG_BUFSIZE	1024 * 63
+
+#define	MIN(x, y)	((x) < (y) ? (x):(y))
 
 void __percpu *spl_pseudo_entropy;
 
 typedef struct {
 	BLAKE3_CTX ctx;
 	uint64_t seek;
+
+	uint8_t *buf;
+	uint32_t pos;
 } rng_t;
+
+static void rng_nextkey(rng_t *rng)
+{
+		uint8_t key[BLAKE3_KEY_LEN];
+		get_random_bytes(key, sizeof (key));
+		Blake3_InitKeyed(&rng->ctx, key);
+		rng->seek = 0;
+}
+
+static void rng_nextdata(rng_t *rng)
+{
+	/* check if current key usage should be limited */
+	if (rng->seek + RNG_BUFSIZE > MAX_PER_KEY)
+		rng_nextkey(rng);
+
+	/* get next bytes for current key */
+	Blake3_FinalSeek(&rng->ctx, rng->seek, rng->buf, RNG_BUFSIZE);
+	rng->seek += RNG_BUFSIZE;
+	rng->pos = 0;
+}
+
+static void copy_to_user_loop(void __user *to, const void *from, unsigned long len)
+{
+	unsigned long done = 0, left = len;
+
+	while (left != 0) {
+		left = copy_to_user(to + done, from + done, len - done);
+		done = len - left;
+	}
+}
 
 static ssize_t
 poc_read(struct file *filep, char *buffer, size_t len, loff_t *offset)
 {
 	rng_t *rng;
-	char *buf;
-	unsigned long copied = 0, left = len;
+	size_t done = 0;
 
 	if (!access_ok(buffer, len))
 		return (-EFAULT);
 
-	buf = vmalloc(len);
-	if (buf == NULL)
-		return (-ENOMEM);
-
 	rng = get_cpu_ptr(spl_pseudo_entropy);
-
-	/* check if current key usage is too much */
-	if (rng->seek + len > MAX_PER_KEY) {
-		uint8_t key[BLAKE3_KEY_LEN];
-		get_random_bytes(key, sizeof (key));
-		Blake3_InitKeyed(&rng->ctx, key);
-		rng->seek = 0;
+	while (done != len) {
+		size_t todo = MIN(len - done, RNG_BUFSIZE - rng->pos);
+		copy_to_user_loop(buffer + done, rng->buf + rng->pos, todo);
+		rng->pos += todo;
+		done += todo;
+		if (rng->pos == RNG_BUFSIZE)
+			rng_nextdata(rng);
 	}
-
-	/* get next bytes for current key */
-	Blake3_FinalSeek(&rng->ctx, rng->seek, buf, len);
-
-	/*
-	 * XXX this is not the KDF function which should perform
-	 * better ... it's MAC currently
-	 */
-
-	/* increment seek counter */
-	rng->seek += len;
-
 	put_cpu_ptr(spl_pseudo_entropy);
-
-	while (left != 0) {
-		left = copy_to_user(buffer + copied, buf + copied, len);
-		copied = len - left;
-	}
-	vfree(buf);
 
 	return (len);
 }
@@ -101,12 +114,8 @@ static struct miscdevice poc_misc = {
 static int __init
 spl_random_init(void)
 {
-	uint8_t key[BLAKE3_KEY_LEN];
+	uint8_t key[2];
 	int i = 0;
-
-	spl_pseudo_entropy = __alloc_percpu(sizeof (rng_t), sizeof (uint64_t));
-	if (!spl_pseudo_entropy)
-		return (-ENOMEM);
 
 	get_random_bytes(key, sizeof (key));
 	if (key[0] == 0 && key[1] == 0) {
@@ -115,11 +124,17 @@ spl_random_init(void)
 		return (-EAGAIN);
 	}
 
+	spl_pseudo_entropy = __alloc_percpu(sizeof (rng_t), sizeof (uint64_t));
+	if (!spl_pseudo_entropy)
+		return (-ENOMEM);
+
 	for_each_possible_cpu(i) {
 		rng_t *rng = per_cpu_ptr(spl_pseudo_entropy, i);
-		get_random_bytes(key, sizeof (key));
-		Blake3_InitKeyed(&rng->ctx, key);
-		rng->seek = 0;
+		rng_nextkey(rng);
+		rng->buf = vmalloc(RNG_BUFSIZE);
+		if (rng->buf == NULL)
+			return (-ENOMEM);
+		rng_nextdata(rng);
 	}
 
 	// SSE41 and AVX2 need fpu_begin()/fpu_end() :/
@@ -127,8 +142,8 @@ spl_random_init(void)
 		blake3_impl_setname("sse41");
 
 	// SSE41 seems faster for smaller units
-	//if (zfs_avx2_available())
-	//	blake3_impl_setname("avx2");
+	if (zfs_avx2_available())
+		blake3_impl_setname("avx2");
 
 	return (0);
 }
@@ -136,6 +151,12 @@ spl_random_init(void)
 static void
 spl_random_fini(void)
 {
+	int i = 0;
+
+	for_each_possible_cpu(i) {
+		rng_t *rng = per_cpu_ptr(spl_pseudo_entropy, i);
+		vfree(rng->buf);
+	}
 	free_percpu(spl_pseudo_entropy);
 }
 
